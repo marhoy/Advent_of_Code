@@ -7,17 +7,29 @@ logging.basicConfig(format='[%(levelname)s] %(name)s(%(lineno)s): %(message)s',
                     level=logging.WARNING)
 LOG = logging.getLogger(__name__)
 
+"""
+This is used on several days:
+https://adventofcode.com/2019/day/2
+https://adventofcode.com/2019/day/5
+https://adventofcode.com/2019/day/7
+https://adventofcode.com/2019/day/9
+"""
+
 
 class Machine:
     def __init__(self,
                  program: str,
-                 phase: int,
-                 machine_id: Optional[int] = None,
-                 loglevel: int = logging.WARNING
+                 phase: int = None,
+                 machine_id: Optional[int] = 0,
+                 loglevel: int = logging.INFO
                  ) -> None:
         self.memory = self.str2mem(program)
         self.ptr = 0
-        self.phase = [phase]
+        self.relative_base = 0
+        if phase is not None:
+            self.phase = [phase]
+        else:
+            self.phase = []
         self.inputs = collections.deque()
         self.outputs = collections.deque()
         self.finished = False
@@ -36,22 +48,45 @@ class Machine:
         opcode = int(s[-2:])
         modes = list(map(int, s[:3]))
         modes.reverse()
-        if modes[2] == 1:
-            raise ValueError("Mode of parameter 3 cannot not be 1")
+        for mode in modes:
+            if mode not in [0, 1, 2]:
+                raise ValueError("Illegal mode: {}".format(mode))
         return opcode, modes
 
-    def get_params(self,
-                   modes: List[int],
-                   ptypes: str
-                   ) -> List[int]:
+    def extend_memory(self, max_address):
+        """Allocate more memory such that max_address is valid"""
+        extra_size = max_address + 1 - len(self.memory)
+        LOG.debug("Allocating extra memory: {}".format(extra_size))
+        self.memory.extend([0] * extra_size)
+
+    def get_mem_value(self, address):
+        """Get the value at an address"""
+        if address >= len(self.memory):
+            self.extend_memory(address)
+        return self.memory[address]
+
+    def set_mem_value(self, address, value):
+        """Set the value at an address to a value"""
+        if address >= len(self.memory):
+            self.extend_memory(address)
+        LOG.debug("Writing to address {}: {}".format(address, value))
+        self.memory[address] = value
+
+    def get_params(self, modes: List[int], ptypes: str) -> List[int]:
         """Read parameters from memory"""
         values = []
         params = self.memory[self.ptr + 1: self.ptr + len(modes) + 1]
         for param, mode, ptype in zip(params, modes, ptypes):
-            if mode == 1 or ptype == 'w':
-                values.append(param)
-            elif mode == 0:
-                values.append(self.memory[param])
+            # Relative mode
+            if mode == 2:
+                param += self.relative_base
+
+            # If reading in position or relative mode, look up the value at
+            # that address. Otherwise return the parameter directly
+            if ptype == 'r' and mode in [0, 2]:
+                param = self.get_mem_value(param)
+            values.append(param)
+
         return values
 
     def add_input(self, value: int) -> None:
@@ -61,19 +96,20 @@ class Machine:
     def run(self) -> None:
         """Run the machine until it halts or waits for input"""
         while True:
-            opcode, modes = self.get_opcode_and_modes(self.memory[self.ptr])
+            opcode_value = self.get_mem_value(self.ptr)
+            opcode, modes = self.get_opcode_and_modes(opcode_value)
             if opcode == 1:
                 p1, p2, p3 = self.get_params(modes, 'rrw')
-                self.memory[p3] = p1 + p2
+                self.set_mem_value(p3, p1 + p2)
                 self.ptr += 4
             elif opcode == 2:
                 p1, p2, p3 = self.get_params(modes, 'rrw')
-                self.memory[p3] = p1 * p2
+                self.set_mem_value(p3, p1 * p2)
                 self.ptr += 4
             elif opcode == 3:
                 p1, *_ = self.get_params(modes, 'w')
                 if self.phase:  # This will only be True the first time
-                    self.memory[p1] = self.phase.pop()
+                    self.set_mem_value(p1, self.phase.pop())
                 elif not self.inputs:
                     LOG.info("Machine {}: Waiting for new input".format(
                         self.machine_id))
@@ -82,7 +118,7 @@ class Machine:
                     input_value = self.inputs.pop()
                     LOG.debug("Machine {}: Popping input {}".format(
                         self.machine_id, input_value))
-                    self.memory[p1] = input_value
+                    self.set_mem_value(p1, input_value)
                 self.ptr += 2
             elif opcode == 4:
                 output, *_ = self.get_params(modes, 'r')
@@ -104,12 +140,16 @@ class Machine:
                     self.ptr += 3
             elif opcode == 7:
                 p1, p2, p3 = self.get_params(modes, 'rrw')
-                self.memory[p3] = int(p1 < p2)
+                self.set_mem_value(p3, int(p1 < p2))
                 self.ptr += 4
             elif opcode == 8:
                 p1, p2, p3 = self.get_params(modes, 'rrw')
-                self.memory[p3] = int(p1 == p2)
+                self.set_mem_value(p3, int(p1 == p2))
                 self.ptr += 4
+            elif opcode == 9:
+                p1, *_ = self.get_params(modes, 'r')
+                self.relative_base += p1
+                self.ptr += 2
             elif opcode == 99:
                 self.finished = True
                 LOG.info("Machine {} is halted".format(self.machine_id))
