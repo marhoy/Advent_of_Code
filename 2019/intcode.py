@@ -1,5 +1,5 @@
 import collections
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Iterable
 import logging
 
 # Configure logging
@@ -99,9 +99,22 @@ class Machine:
         """Add a value to the input queue"""
         self._inputs.append(value)
 
+    def add_inputs(self, values: Iterable[int]) -> None:
+        """Add input values from an iterable"""
+        for value in values:
+            self._inputs.append(value)
+
     def get_output(self) -> int:
         """Get value from the output queue"""
         return self._outputs.popleft()
+
+    def get_outputs(self, n: int = None) -> Tuple[int]:
+        """Get several (n) values from the output queue
+        If n is not specified, all outputs are returned"""
+        if n is None:
+            n = len(self._outputs)
+        assert len(self._outputs) >= n
+        return tuple([self.get_output() for _ in range(n)])
 
     @property
     def has_output(self) -> bool:
