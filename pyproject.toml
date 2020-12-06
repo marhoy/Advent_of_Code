@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "advent_of_code"
+version = "0.1.0"
+description = "Solutions to the Advent of Code"
+authors = ["Martin Høy <marhoy@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pydantic = "^1.7.3"
+numpy = "^1.19.4"
+
+[tool.poetry.dev-dependencies]
+nbdime = "^2.1.0"
+ipykernel = "^5.3.4"
+pre-commit = "^2.9.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
