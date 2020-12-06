@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>day06</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Day18</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14268,8 +14268,9 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;day06.input&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-    <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">ascii_lowercase</span><span class="p">,</span> <span class="n">ascii_uppercase</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">heapq</span>
 </pre></div>
 
      </div>
@@ -14277,13 +14278,30 @@ a.anchor-link {
 </div>
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">groups</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">groups</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_grid</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">grid</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">starts</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+                <span class="n">grid</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">char</span>
+                <span class="k">if</span> <span class="n">char</span> <span class="o">==</span> <span class="s1">&#39;@&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">part</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">keys</span><span class="p">[</span><span class="n">char</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">part</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">keys</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">starts</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+                        <span class="n">grid</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">starts</span><span class="p">)</span>
+                        <span class="n">starts</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">ascii_lowercase</span><span class="p">:</span>
+                    <span class="n">keys</span><span class="p">[</span><span class="n">char</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grid</span><span class="p">,</span> <span class="n">keys</span>
 </pre></div>
 
      </div>
@@ -14291,32 +14309,192 @@ a.anchor-link {
 </div>
 </div>
 
-<div class="jp-Cell-outputWrapper">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">find_neighbours</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find neighbours in the two first dimensions.</span>
+<span class="sd">    Remaining dimensions are unchanged&quot;&quot;&quot;</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span> <span class="o">=</span> <span class="n">pos</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">x</span> <span class="o">+</span> <span class="n">dx</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">dy</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))]</span>
+</pre></div>
 
+     </div>
+</div>
+</div>
+</div>
 
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">find_distances_bfs</span><span class="p">(</span><span class="n">start_pos</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Starting from one key, find distance to all other keys, using BFS.</span>
+<span class="sd">    Take note of the doors we have to pass, so we know what keys we need&quot;&quot;&quot;</span>
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
+    <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">dist</span><span class="p">[</span><span class="n">start_pos</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">queue</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">([(</span><span class="n">start_pos</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">start_pos</span><span class="p">]))])</span>
 
+    <span class="k">while</span> <span class="n">queue</span><span class="p">:</span>
+        <span class="n">pos</span><span class="p">,</span> <span class="n">keys_needed</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">char</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+        
+        <span class="c1"># We found a key!</span>
+        <span class="k">if</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">distances</span><span class="p">[</span><span class="n">char</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="n">keys_needed</span><span class="p">)</span>
+            <span class="n">keys_needed</span> <span class="o">=</span> <span class="n">keys_needed</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>
+            
+        <span class="c1"># Need a key to pass this door</span>
+        <span class="k">if</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">ascii_uppercase</span><span class="p">:</span>
+            <span class="n">keys_needed</span> <span class="o">=</span> <span class="n">keys_needed</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">char</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
 
+        <span class="c1"># Enqueue the unvisited neighbours of this point</span>
+        <span class="n">neighbours</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">find_neighbours</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;#&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">n_pos</span> <span class="ow">in</span> <span class="n">neighbours</span><span class="p">:</span>
+            <span class="n">dist</span><span class="p">[</span><span class="n">n_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">n_pos</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">queue</span><span class="o">.</span><span class="n">appendleft</span><span class="p">((</span><span class="n">n_pos</span><span class="p">,</span> <span class="n">keys_needed</span><span class="p">))</span>
 
+    <span class="k">return</span> <span class="n">distances</span>
+</pre></div>
 
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>[[&#39;ymw&#39;, &#39;w&#39;, &#39;wm&#39;, &#39;vsw&#39;, &#39;wm&#39;],
- [&#39;vs&#39;, &#39;lqn&#39;, &#39;ti&#39;, &#39;uvl&#39;],
- [&#39;fryuv&#39;, &#39;pngtvuhfr&#39;, &#39;fcbrulv&#39;],
- [&#39;xhzrepycnwsm&#39;, &#39;iaxfykeblwp&#39;],
- [&#39;eaqkisdgcojhzw&#39;, &#39;ckhbasd&#39;, &#39;ckdhpasb&#39;, &#39;hcpydabks&#39;, &#39;sckdha&#39;],
- [&#39;kn&#39;, &#39;nk&#39;, &#39;nuk&#39;]]</pre>
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">all_distances</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Compute all key-to-key distances and the keys needed to reach each key&quot;&quot;&quot;</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">distances</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_distances_bfs</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">distances</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">find_reachable</span><span class="p">(</span><span class="n">from_key</span><span class="p">,</span> <span class="n">have_keys</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find all keys you can reach from &#39;key&#39;, with &#39;have_keys&#39; keys&quot;&quot;&quot;</span>
+    <span class="n">reachable</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dest</span><span class="p">,</span> <span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">need_keys</span><span class="p">)</span> <span class="ow">in</span> <span class="n">distances</span><span class="p">[</span><span class="n">from_key</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">dest</span> <span class="ow">in</span> <span class="n">have_keys</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">need_keys</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">have_keys</span><span class="p">):</span>
+            <span class="n">reachable</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">dest</span><span class="p">,</span> <span class="n">dist</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">reachable</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">dist_all_keys</span><span class="p">(</span><span class="n">start</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Use Dijkstra to find the shortest route to all the keys.</span>
+<span class="sd">    Nodes are represented by the key (position) and the set of collected keys&quot;&quot;&quot;</span>
+    
+    <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">have_keys</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">start_node</span> <span class="o">=</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">have_keys</span><span class="p">)</span>
+    <span class="n">dist</span><span class="p">[</span><span class="n">start_node</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">queue</span> <span class="o">=</span> <span class="p">[(</span><span class="n">dist</span><span class="p">[</span><span class="n">start_node</span><span class="p">],</span> <span class="n">start_node</span><span class="p">)]</span>
+
+    <span class="k">while</span> <span class="n">queue</span><span class="p">:</span>
+        <span class="n">dist_node</span><span class="p">,</span> <span class="n">node</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="c1"># This node has already been visited via a shorter route</span>
+            <span class="k">continue</span>
+
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>      
+        <span class="n">from_key</span><span class="p">,</span> <span class="n">have_keys</span> <span class="o">=</span> <span class="n">node</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">have_keys</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+            <span class="c1"># We have all the keys, return the distance</span>
+            <span class="k">return</span> <span class="n">dist_node</span>
+
+        <span class="n">reachable</span> <span class="o">=</span> <span class="n">find_reachable</span><span class="p">(</span><span class="n">from_key</span><span class="p">,</span> <span class="n">have_keys</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">to_key</span><span class="p">,</span> <span class="n">dist_to_key</span> <span class="ow">in</span> <span class="n">reachable</span><span class="p">:</span>
+            <span class="n">new_node</span> <span class="o">=</span> <span class="p">(</span><span class="n">to_key</span><span class="p">,</span> <span class="n">have_keys</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">to_key</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">new_node</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="c1"># That node has already been visited via a shorter route</span>
+                <span class="k">continue</span>       
+            <span class="n">dist_new_node</span> <span class="o">=</span> <span class="n">dist_node</span> <span class="o">+</span> <span class="n">dist_to_key</span>
+            <span class="k">if</span> <span class="n">dist_new_node</span> <span class="o">&lt;</span> <span class="n">dist</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">new_node</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)):</span>
+                <span class="c1"># This is either the first time we can reach new_node,</span>
+                <span class="c1"># or we just found a shorter route to it</span>
+                <span class="n">dist</span><span class="p">[</span><span class="n">new_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist_new_node</span>
+                <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="p">(</span><span class="n">dist_new_node</span><span class="p">,</span> <span class="n">new_node</span><span class="p">))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
 </div>
 
 </div>
-
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Tests">Tests<a class="anchor-link" href="#Tests">&#182;</a></h2>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">grid</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">get_grid</span><span class="p">(</span><span class="s2">&quot;day18-test1.input&quot;</span><span class="p">)</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">all_distances</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">dist_all_keys</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">86</span>
 
+<span class="n">grid</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">get_grid</span><span class="p">(</span><span class="s2">&quot;day18-test2.input&quot;</span><span class="p">)</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">all_distances</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">dist_all_keys</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">132</span>
+
+<span class="n">grid</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">get_grid</span><span class="p">(</span><span class="s2">&quot;day18-test3.input&quot;</span><span class="p">)</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">all_distances</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">dist_all_keys</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">136</span>
+
+<span class="n">grid</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">get_grid</span><span class="p">(</span><span class="s2">&quot;day18-test4.input&quot;</span><span class="p">)</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">all_distances</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">dist_all_keys</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">81</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
 </div>
 
 </div>
@@ -14327,14 +14505,12 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
-
-<span class="n">n_yes_per_group</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">group</span><span class="p">)))</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
-
-<span class="nb">sum</span><span class="p">(</span><span class="n">n_yes_per_group</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">grid</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">get_grid</span><span class="p">(</span><span class="s2">&quot;day18.input&quot;</span><span class="p">)</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">all_distances</span><span class="p">()</span>
+<span class="n">dist_all_keys</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14350,13 +14526,13 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
 
 
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>6735</pre>
+<pre>5808</pre>
 </div>
 
 </div>
@@ -14370,18 +14546,109 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Part-2">Part 2<a class="anchor-link" href="#Part-2">&#182;</a></h1>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">patch_grid_part2</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+    <span class="n">replace</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="s1">&#39;0#1###2#3&#39;</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="s1">&#39;@&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">grid</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">replace</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">keys</span><span class="p">[</span><span class="s1">&#39;@&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">dr</span><span class="p">,</span> <span class="n">dc</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])):</span>
+        <span class="n">keys</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">dr</span><span class="p">,</span> <span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dc</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">grid</span><span class="p">,</span> <span class="n">keys</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">dist_all_keys_pt2</span><span class="p">(</span><span class="n">start_points</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Use Dijkstra to find the shortest route to all the keys.</span>
+<span class="sd">    Nodes are represented by the position all four robots,</span>
+<span class="sd">    plus the full set of collected keys from all robots&quot;&quot;&quot;</span>
+    
+    <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">have_keys</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">start_points</span><span class="p">)</span>
+    <span class="n">start_node</span> <span class="o">=</span> <span class="p">(</span><span class="n">have_keys</span><span class="p">,</span> <span class="n">have_keys</span><span class="p">)</span>
+    <span class="n">dist</span><span class="p">[</span><span class="n">start_node</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">queue</span> <span class="o">=</span> <span class="p">[(</span><span class="n">dist</span><span class="p">[</span><span class="n">start_node</span><span class="p">],</span> <span class="n">start_node</span><span class="p">)]</span>
+
+    <span class="k">while</span> <span class="n">queue</span><span class="p">:</span>
+        <span class="n">dist_node</span><span class="p">,</span> <span class="n">node</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="k">continue</span>
+            
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>      
+        <span class="n">on_keys</span><span class="p">,</span> <span class="n">have_keys</span> <span class="o">=</span> <span class="n">node</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">have_keys</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">dist_node</span>
+
+        <span class="k">for</span> <span class="n">on_key</span> <span class="ow">in</span> <span class="n">on_keys</span><span class="p">:</span>
+            <span class="n">reachable</span> <span class="o">=</span> <span class="n">find_reachable</span><span class="p">(</span><span class="n">on_key</span><span class="p">,</span> <span class="n">have_keys</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">to_key</span><span class="p">,</span> <span class="n">dist_to_key</span> <span class="ow">in</span> <span class="n">reachable</span><span class="p">:</span>
+                <span class="n">new_on_keys</span> <span class="o">=</span> <span class="n">on_keys</span> <span class="o">^</span> <span class="nb">set</span><span class="p">((</span><span class="n">on_key</span><span class="p">,</span> <span class="n">to_key</span><span class="p">))</span>
+                <span class="n">new_node</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_on_keys</span><span class="p">,</span> <span class="n">have_keys</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">to_key</span><span class="p">))</span>
+                
+                <span class="k">if</span> <span class="n">new_node</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                
+                <span class="n">tot_dist</span> <span class="o">=</span> <span class="n">dist_node</span> <span class="o">+</span> <span class="n">dist_to_key</span>
+                <span class="k">if</span> <span class="n">tot_dist</span> <span class="o">&lt;</span> <span class="n">dist</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">new_node</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)):</span>
+                    <span class="n">dist</span><span class="p">[</span><span class="n">new_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">tot_dist</span>
+                    <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="p">(</span><span class="n">tot_dist</span><span class="p">,</span> <span class="n">new_node</span><span class="p">))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Tests</span>
+<span class="n">grid</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">get_grid</span><span class="p">(</span><span class="s2">&quot;day18-part2-test1.input&quot;</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">all_distances</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">dist_all_keys_pt2</span><span class="p">((</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">32</span>
+
+<span class="n">grid</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">get_grid</span><span class="p">(</span><span class="s2">&quot;day18-part2-test2.input&quot;</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">all_distances</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">dist_all_keys_pt2</span><span class="p">((</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">72</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">all_yes_per_group</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">person</span><span class="p">)</span> <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">group</span><span class="p">]))</span>
-    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span>
-<span class="p">]</span>
-
-<span class="nb">sum</span><span class="p">(</span><span class="n">all_yes_per_group</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">grid</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">patch_grid_part2</span><span class="p">(</span><span class="o">*</span><span class="n">get_grid</span><span class="p">(</span><span class="s2">&quot;day18.input&quot;</span><span class="p">))</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">all_distances</span><span class="p">()</span>
+<span class="n">dist_all_keys_pt2</span><span class="p">((</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">))</span>
 </pre></div>
 
      </div>
@@ -14397,13 +14664,13 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[13]:</div>
 
 
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>3221</pre>
+<pre>1992</pre>
 </div>
 
 </div>

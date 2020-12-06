@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>day06</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Day04</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14268,8 +14268,14 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;day06.input&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-    <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">valid_password1</span><span class="p">(</span><span class="n">digits</span><span class="p">):</span>
+    <span class="n">has_pair</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span> <span class="n">digits</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="k">if</span> <span class="n">d1</span> <span class="o">==</span> <span class="n">d2</span><span class="p">:</span>
+            <span class="n">has_pair</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">d1</span> <span class="o">&gt;</span> <span class="n">d2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">has_pair</span>
 </pre></div>
 
      </div>
@@ -14277,13 +14283,23 @@ a.anchor-link {
 </div>
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">groups</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">groups</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">valid_password2</span><span class="p">(</span><span class="n">digits</span><span class="p">):</span>
+    <span class="n">multiples</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span> <span class="n">digits</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="k">if</span> <span class="n">d1</span> <span class="o">==</span> <span class="n">d2</span><span class="p">:</span>
+            <span class="c1"># Store multiples in a dictionary</span>
+            <span class="n">multiples</span><span class="p">[</span><span class="n">d1</span><span class="p">]</span> <span class="o">=</span> <span class="n">multiples</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">d1</span> <span class="o">&gt;</span> <span class="n">d2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># There must be at least one strict pair</span>
+    <span class="k">return</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">multiples</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 </pre></div>
 
      </div>
@@ -14291,32 +14307,49 @@ a.anchor-link {
 </div>
 </div>
 
-<div class="jp-Cell-outputWrapper">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">find_passwords</span><span class="p">(</span><span class="n">range_start</span><span class="p">,</span> <span class="n">range_end</span><span class="p">,</span> <span class="n">valid_func</span><span class="p">):</span>
+    <span class="n">passwords</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">range_start</span><span class="p">,</span> <span class="n">range_end</span><span class="p">):</span>
+        <span class="n">digits</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">valid_func</span><span class="p">(</span><span class="n">digits</span><span class="p">):</span>
+            <span class="n">passwords</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">passwords</span>
+</pre></div>
 
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
-
-
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>[[&#39;ymw&#39;, &#39;w&#39;, &#39;wm&#39;, &#39;vsw&#39;, &#39;wm&#39;],
- [&#39;vs&#39;, &#39;lqn&#39;, &#39;ti&#39;, &#39;uvl&#39;],
- [&#39;fryuv&#39;, &#39;pngtvuhfr&#39;, &#39;fcbrulv&#39;],
- [&#39;xhzrepycnwsm&#39;, &#39;iaxfykeblwp&#39;],
- [&#39;eaqkisdgcojhzw&#39;, &#39;ckhbasd&#39;, &#39;ckdhpasb&#39;, &#39;hcpydabks&#39;, &#39;sckdha&#39;],
- [&#39;kn&#39;, &#39;nk&#39;, &#39;nuk&#39;]]</pre>
+     </div>
+</div>
+</div>
 </div>
 
-</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Tests</span>
+<span class="k">assert</span> <span class="n">valid_password1</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">111111</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span>
+<span class="k">assert</span> <span class="n">valid_password1</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">223450</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span>
+<span class="k">assert</span> <span class="n">valid_password1</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">123789</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span>
 
-</div>
+<span class="k">assert</span> <span class="n">valid_password1</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">112233</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span>
+<span class="k">assert</span> <span class="n">valid_password1</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">123444</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span>
+<span class="k">assert</span> <span class="n">valid_password1</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">111122</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span>
 
+<span class="k">assert</span> <span class="n">valid_password2</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">112233</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span>
+<span class="k">assert</span> <span class="n">valid_password2</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">123444</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span>
+<span class="k">assert</span> <span class="n">valid_password2</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">111122</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
 </div>
 
 </div>
@@ -14324,17 +14357,27 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Part-1">Part 1<a class="anchor-link" href="#Part-1">&#182;</a></h1>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">range_start</span><span class="p">,</span> <span class="n">range_end</span> <span class="o">=</span> <span class="mi">234208</span><span class="p">,</span> <span class="mi">765869</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
-
-<span class="n">n_yes_per_group</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">group</span><span class="p">)))</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
-
-<span class="nb">sum</span><span class="p">(</span><span class="n">n_yes_per_group</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">find_passwords</span><span class="p">(</span><span class="n">range_start</span><span class="p">,</span> <span class="n">range_end</span><span class="p">,</span> <span class="n">valid_password1</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14350,13 +14393,13 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
 
 
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>6735</pre>
+<pre>1246</pre>
 </div>
 
 </div>
@@ -14373,15 +14416,10 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">all_yes_per_group</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">person</span><span class="p">)</span> <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">group</span><span class="p">]))</span>
-    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span>
-<span class="p">]</span>
-
-<span class="nb">sum</span><span class="p">(</span><span class="n">all_yes_per_group</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">find_passwords</span><span class="p">(</span><span class="n">range_start</span><span class="p">,</span> <span class="n">range_end</span><span class="p">,</span> <span class="n">valid_password2</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14397,15 +14435,100 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
 
 
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>3221</pre>
+<pre>814</pre>
 </div>
 
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="For-the-specially-interested">For the specially interested<a class="anchor-link" href="#For-the-specially-interested">&#182;</a></h1>
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>By using range(start, end), we are looping over a lot of numbers that do not have monotonically increasing digits. One way to speed up the process would be to instead make a generator that yields numbers with monotonically increasing digits. That would e.g. allow us to skip directly from 899999 to 999999, saving 100.000 iterations.</p>
+<p>One idea is to start from the end if the number: Increase that by one. But if you flip to 0, continue with the next number. Set the last digit equal to the previous.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">increment</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">number</span>
+    <span class="k">if</span> <span class="n">number</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">9</span><span class="p">:</span>
+        <span class="n">number</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="n">increment</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">number</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">number</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">number</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">range_start</span> <span class="o">=</span> <span class="mi">777</span>
+<span class="n">range_stop</span> <span class="o">=</span> <span class="mi">999</span>
+
+<span class="n">number</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">range_start</span><span class="p">)]</span>
+<span class="k">while</span> <span class="nb">int</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">number</span><span class="p">]))</span> <span class="o">&lt;</span> <span class="n">range_stop</span><span class="p">:</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="n">increment</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>[7, 7, 8]
+[7, 7, 9]
+[7, 8, 8]
+[7, 8, 9]
+[7, 9, 9]
+[8, 8, 8]
+[8, 8, 9]
+[8, 9, 9]
+[9, 9, 9]
+</pre>
+</div>
 </div>
 
 </div>

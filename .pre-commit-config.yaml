@@ -1,5 +1,20 @@
 repos:
-- repo: https://github.com/kynan/nbstripout
-  rev: master
-  hooks:
-    - id: nbstripout
+-   repo: https://github.com/kynan/nbstripout
+    rev: master
+    hooks:
+    -   id: nbstripout
+      #- repo: git://github.com/mantic-data/pre-commit-jupyter
+      #  rev: master
+      #  hooks:
+      #    - id: python-nbconvert
+-   repo: local
+    hooks:
+    -   id: jupyter_to_html
+        name: jupyter_to_html
+        entry: jupyter nbconvert --to html --execute
+        files: .ipynb
+        exclude: |
+            (?x)^(
+                2019/Day25.ipynb
+            )$
+        language: system

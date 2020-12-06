@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>day06</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Day12</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14268,8 +14268,9 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;day06.input&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-    <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">re</span>
 </pre></div>
 
      </div>
@@ -14277,13 +14278,28 @@ a.anchor-link {
 </div>
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">groups</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">groups</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Vector</span><span class="p">:</span>
+    <span class="n">x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">y</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">z</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Moon</span><span class="p">:</span>
+    <span class="n">pos</span><span class="p">:</span> <span class="n">Vector</span>
+    <span class="n">vel</span><span class="p">:</span> <span class="n">Vector</span>
+    
+    <span class="k">def</span> <span class="nf">__energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrib</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">attrib</span><span class="p">,</span> <span class="n">axis</span><span class="p">))</span> <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="s1">&#39;xyz&#39;</span><span class="p">])</span>
+    
+    <span class="k">def</span> <span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">__energy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vel</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14291,32 +14307,64 @@ a.anchor-link {
 </div>
 </div>
 
-<div class="jp-Cell-outputWrapper">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">parse_input</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">moons</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">moon</span> <span class="o">=</span> <span class="n">Moon</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">Vector</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;=(-?\d+)&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">))),</span>
+                        <span class="n">vel</span><span class="o">=</span><span class="n">Vector</span><span class="p">())</span>
+            <span class="n">moons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">moon</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">moons</span>
+</pre></div>
 
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
-
-
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>[[&#39;ymw&#39;, &#39;w&#39;, &#39;wm&#39;, &#39;vsw&#39;, &#39;wm&#39;],
- [&#39;vs&#39;, &#39;lqn&#39;, &#39;ti&#39;, &#39;uvl&#39;],
- [&#39;fryuv&#39;, &#39;pngtvuhfr&#39;, &#39;fcbrulv&#39;],
- [&#39;xhzrepycnwsm&#39;, &#39;iaxfykeblwp&#39;],
- [&#39;eaqkisdgcojhzw&#39;, &#39;ckhbasd&#39;, &#39;ckdhpasb&#39;, &#39;hcpydabks&#39;, &#39;sckdha&#39;],
- [&#39;kn&#39;, &#39;nk&#39;, &#39;nuk&#39;]]</pre>
+     </div>
+</div>
+</div>
 </div>
 
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">apply_gravity</span><span class="p">(</span><span class="n">moons</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">moons</span><span class="p">,</span> <span class="mi">2</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m2</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">m2</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m2</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m2</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">m2</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m2</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
 </div>
 
-</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">apply_velocity</span><span class="p">(</span><span class="n">moons</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">moon</span> <span class="ow">in</span> <span class="n">moons</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">moon</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">moon</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">moon</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">))</span>
+</pre></div>
 
+     </div>
+</div>
+</div>
 </div>
 
 </div>
@@ -14324,17 +14372,50 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Part-1">Part 1<a class="anchor-link" href="#Part-1">&#182;</a></h1>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">part1</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">moons</span> <span class="o">=</span> <span class="n">parse_input</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+        <span class="n">apply_gravity</span><span class="p">(</span><span class="n">moons</span><span class="p">)</span>
+        <span class="n">apply_velocity</span><span class="p">(</span><span class="n">moons</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">moon</span><span class="o">.</span><span class="n">energy</span><span class="p">()</span> <span class="k">for</span> <span class="n">moon</span> <span class="ow">in</span> <span class="n">moons</span><span class="p">])</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Tests</span>
+<span class="k">assert</span> <span class="n">part1</span><span class="p">(</span><span class="s2">&quot;day12-test1.input&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">179</span>
+<span class="k">assert</span> <span class="n">part1</span><span class="p">(</span><span class="s2">&quot;day12-test2.input&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1940</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
-
-<span class="n">n_yes_per_group</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">group</span><span class="p">)))</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
-
-<span class="nb">sum</span><span class="p">(</span><span class="n">n_yes_per_group</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">part1</span><span class="p">(</span><span class="s2">&quot;day12.input&quot;</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14350,13 +14431,13 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
 
 
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>6735</pre>
+<pre>10055</pre>
 </div>
 
 </div>
@@ -14370,18 +14451,104 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Part-2">Part 2<a class="anchor-link" href="#Part-2">&#182;</a></h1>
 </div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Let S be the set of all states, and F: S -&gt; S be the mapping from one state of the moons to the next (working as described in the problem statement). Notice that F is a bijection since we can easily calculate the inverse (the previous state from a state). Suppose F has a cycle (or the problem would not be solvable). Then the first repeating state must be the initial state, otherwise, F would not be one-to-one. Hence, F is periodic.</p>
+<p>The key is to notice that we can split F into axis components Fx, Fy, Fz, since a state of an axis is independent of states of all the other axes. Then the period length of F is the lowest common multiple of the period lengths of Fx, Fy, and Fz. So we just have to find independently the periods of Fx, Fy, and Fz which are hopefully much shorter than the period of F, and indeed they are shorter.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="n">moons</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns all values for the x-, y- and z-axis separately&quot;&quot;&quot;</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">moon</span> <span class="ow">in</span> <span class="n">moons</span><span class="p">:</span>
+            <span class="n">state</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">moon</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">axis</span><span class="p">))</span>
+            <span class="n">state</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">moon</span><span class="o">.</span><span class="n">vel</span><span class="p">,</span> <span class="n">axis</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">state</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">lcm</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="s2">&quot;Returns the least common multiple of two numbers&quot;</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">//</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">part2</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">moons</span> <span class="o">=</span> <span class="n">parse_input</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">initial_state</span> <span class="o">=</span> <span class="n">get_state</span><span class="p">(</span><span class="n">moons</span><span class="p">)</span>
+
+    <span class="n">cycle_size</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">apply_gravity</span><span class="p">(</span><span class="n">moons</span><span class="p">)</span>
+        <span class="n">apply_velocity</span><span class="p">(</span><span class="n">moons</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">get_state</span><span class="p">(</span><span class="n">moons</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cycle_size</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="ow">and</span> <span class="n">state</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">==</span> <span class="n">initial_state</span><span class="p">[</span><span class="n">axis</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">-axis has cycled: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">step</span><span class="p">))</span>
+                <span class="n">cycle_size</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">cycle_size</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">lcm</span><span class="p">,</span> <span class="n">cycle_size</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">all_yes_per_group</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">person</span><span class="p">)</span> <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">group</span><span class="p">]))</span>
-    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span>
-<span class="p">]</span>
-
-<span class="nb">sum</span><span class="p">(</span><span class="n">all_yes_per_group</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">assert</span> <span class="n">part2</span><span class="p">(</span><span class="s2">&quot;day12-test1.input&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2772</span>
+<span class="k">assert</span> <span class="n">part2</span><span class="p">(</span><span class="s2">&quot;day12-test2.input&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4686774924</span>
 </pre></div>
 
      </div>
@@ -14397,33 +14564,73 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>3221</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>x-axis has cycled: 18
+y-axis has cycled: 28
+z-axis has cycled: 44
+x-axis has cycled: 2028
+z-axis has cycled: 4702
+y-axis has cycled: 5898
+</pre>
+</div>
 </div>
 
 </div>
 
 </div>
 
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">part2</span><span class="p">(</span><span class="s2">&quot;day12.input&quot;</span><span class="p">)</span>
 </pre></div>
 
      </div>
 </div>
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>y-axis has cycled: 108344
+z-axis has cycled: 193052
+x-axis has cycled: 286332
+</pre>
+</div>
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>374307970285176</pre>
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 </div>
