@@ -8,6 +8,8 @@ authors = ["Martin Høy <marhoy@gmail.com>"]
 python = "^3.9"
 pydantic = "^1.7.3"
 numpy = "^1.19.4"
+sympy = "^1.7.1"
+jedi = "^0.17"
 
 [tool.poetry.dev-dependencies]
 nbdime = "^2.1.0"
