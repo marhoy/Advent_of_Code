@@ -17,6 +17,7 @@ plotly = "^5.4.0"
 nbdime = "*"
 ipykernel = "*"
 pre-commit = "*"
+black = "^21.12b0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
