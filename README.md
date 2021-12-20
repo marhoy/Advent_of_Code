@@ -3,7 +3,7 @@ Solutions to the [Advent of Code](https://adventofcode.com/).
 
 # Install
 ```
-pyenv virtualenv 3.9.0 Advent_of_Code
+pyenv virtualenv 3.10.1 Advent_of_Code
 pyenv local Advent_of_Code
 pip install -U pip setuptools
 
