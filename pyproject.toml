@@ -5,7 +5,7 @@ description = "Solutions to the Advent of Code"
 authors = ["Martin Høy <marhoy@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.11"
+python = ">=3.9, <=3.11"
 pydantic = "^1.7.3"
 pandas = "^1.3.4"
 numpy = "^1.19.4"
@@ -17,7 +17,7 @@ plotly = "^5.4.0"
 nbdime = "*"
 ipykernel = "*"
 pre-commit = "*"
-black = "^21.12b0"
+black = "22.10.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
