@@ -12,6 +12,7 @@ numpy = "^1.19.4"
 sympy = "^1.7.1"
 matplotlib = "^3.5.0"
 plotly = "^5.4.0"
+loguru = "^0.6.0"
 
 [tool.poetry.dev-dependencies]
 nbdime = "*"
