@@ -6,19 +6,18 @@ authors = ["Martin Høy <marhoy@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.9, <=3.11"
-pydantic = "^1.7.3"
-pandas = "^1.3.4"
+pydantic = "^2.5.2"
+pandas = "^2.1.0"
 numpy = "^1.19.4"
 sympy = "^1.7.1"
 matplotlib = "^3.5.0"
 plotly = "^5.4.0"
-loguru = "^0.6.0"
+loguru = "^0.7.0"
+networkx = "^3.0"
 
 [tool.poetry.dev-dependencies]
 nbdime = "*"
 ipykernel = "*"
-pre-commit = "*"
-black = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
