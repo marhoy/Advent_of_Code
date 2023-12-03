@@ -5,7 +5,7 @@ description = "Solutions to the Advent of Code"
 authors = ["Martin Høy <marhoy@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.9, <=3.11"
+python = ">=3.9, <3.12"
 pydantic = "^2.5.2"
 pandas = "^2.1.0"
 numpy = "^1.19.4"
