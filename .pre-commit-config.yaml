@@ -1,5 +1,38 @@
+# See https://pre-commit.com for more information
+
 repos:
--   repo: https://github.com/kynan/nbstripout
-    rev: 0.6.1
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.8
     hooks:
-    -   id: nbstripout
+      # Run the linter, automatically fixing issues when possible.
+      - id: ruff
+        types_or: [python, pyi, jupyter]
+        args: [--fix]
+      # Run the formatter.
+      - id: ruff-format
+        types_or: [python, pyi, jupyter]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - pydantic
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: "v1.5.5"
+    hooks:
+      - id: remove-crlf
+
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.7.1
+    hooks:
+      - id: nbstripout
+
+# Exclude years before 2024
+exclude: ^(Queens.*|(201\d|202[0-3])/.*)$
