@@ -1,29 +1,25 @@
-[tool.poetry]
+[project]
 name = "advent_of_code"
 version = "0.1.0"
-description = "Solutions to the Advent of Code"
-authors = ["Martin Høy <marhoy@gmail.com>"]
-package-mode = false                            # Dont' try to install our own code as a package
+description = "Environment for Advent of Code"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "Martin Høy", email = "martin@hoy.priv.no" }]
+# 
+dependencies = [
+    "loguru>=0.7.3",
+    "matplotlib>=3.9.3",
+    "networkx>=3.4.2",
+    "pandas>=2.2.3",
+    "plotly>=5.24.1",
+    "portion>=2.6.0",
+    "pydantic>=2.10.3",
+    "scipy>=1.14.1",
+    "sympy>=1.13.3",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.10, <3.13"
-pydantic = "^2.5.2"
-pandas = "^2.1.0"
-numpy = "^2.1"
-scipy = "^1.14"
-sympy = "^1.7.1"
-matplotlib = "^3.5.0"
-plotly = "^5.4.0"
-loguru = "^0.7.0"
-networkx = "^3.4"
-portion = "^2.4.2"
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.27.1"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = ["ipykernel>=6.29.5"]
 
 [tool.ruff]
 # Consider packages in the src directory as first-party code
